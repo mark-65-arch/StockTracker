@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import StockCard from "@/components/stock-card";
 import AddStockModal from "@/components/add-stock-modal";
 import PeriodSelector from "@/components/period-selector";
-import WatchlistStats from "@/components/watchlist-stats";
 import type { StockWithData } from "@shared/schema";
 
 export default function Home() {
@@ -58,9 +57,6 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Watchlist Stats */}
-        <WatchlistStats />
-
         {/* Stock Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
