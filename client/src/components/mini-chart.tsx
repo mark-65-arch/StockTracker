@@ -113,16 +113,50 @@ export default function MiniChart({ data, trend, symbol }: MiniChartProps) {
 
     // Add data points
     points.forEach((point, i) => {
-      if (i % Math.ceil(points.length / 10) === 0) { // Show every 10th point
+      if (i % Math.ceil(points.length / 20) === 0) { // Show every 20th point for more detail
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', point.x.toString());
         circle.setAttribute('cy', point.y.toString());
-        circle.setAttribute('r', '3');
+        circle.setAttribute('r', '2.5');
         circle.setAttribute('fill', trend === 'positive' ? '#10B981' : '#EF4444');
         circle.setAttribute('stroke', '#ffffff');
-        circle.setAttribute('stroke-width', '2');
+        circle.setAttribute('stroke-width', '1.5');
         svg.appendChild(circle);
       }
+    });
+
+    // Add hover circles for all data points
+    points.forEach((point, i) => {
+      const hoverCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hoverCircle.setAttribute('cx', point.x.toString());
+      hoverCircle.setAttribute('cy', point.y.toString());
+      hoverCircle.setAttribute('r', '4');
+      hoverCircle.setAttribute('fill', 'transparent');
+      hoverCircle.setAttribute('stroke', 'transparent');
+      hoverCircle.style.cursor = 'pointer';
+      
+      // Add tooltip on hover
+      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      const date = new Date(data[i].date).toLocaleDateString();
+      const price = data[i].price.toFixed(2);
+      title.textContent = `${date}: $${price}`;
+      hoverCircle.appendChild(title);
+      
+      // Add hover effects
+      hoverCircle.addEventListener('mouseenter', () => {
+        hoverCircle.setAttribute('fill', trend === 'positive' ? '#10B981' : '#EF4444');
+        hoverCircle.setAttribute('stroke', '#ffffff');
+        hoverCircle.setAttribute('stroke-width', '2');
+        hoverCircle.setAttribute('r', '4');
+      });
+      
+      hoverCircle.addEventListener('mouseleave', () => {
+        hoverCircle.setAttribute('fill', 'transparent');
+        hoverCircle.setAttribute('stroke', 'transparent');
+        hoverCircle.setAttribute('r', '4');
+      });
+      
+      svg.appendChild(hoverCircle);
     });
 
     // Add price labels
