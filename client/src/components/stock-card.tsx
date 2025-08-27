@@ -47,62 +47,78 @@ export default function StockCard({ stock, onRemove }: StockCardProps) {
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200" data-testid={`card-stock-${stock.id}`}>
-      <CardContent className="p-6">
-        {/* Header Section */}
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-2">
-              <h3 className="text-2xl font-bold text-foreground" data-testid={`text-symbol-${stock.id}`}>
-                {stock.symbol}
-              </h3>
-              <Badge 
-                variant={isPositive ? "default" : "destructive"}
-                className={`inline-flex items-center text-sm font-semibold px-3 py-1 ${
-                  isPositive 
-                    ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                    : "bg-red-100 text-red-800 hover:bg-red-100"
-                }`}
-                data-testid={`badge-change-${stock.id}`}
-              >
-                <TrendIcon className="mr-1 h-4 w-4" />
-                {isPositive ? '+' : ''}{stock.changePercent.toFixed(2)}%
-              </Badge>
-            </div>
-            <p className="text-base text-muted-foreground mb-3" data-testid={`text-company-${stock.id}`}>
+    <Card className="hover:shadow-md transition-all duration-200" data-testid={`card-stock-${stock.id}`}>
+      <CardContent className="p-4">
+        <div className="flex items-center space-x-6">
+          {/* Stock Symbol */}
+          <div className="min-w-0 flex-shrink-0">
+            <h3 className="text-lg font-bold text-foreground" data-testid={`text-symbol-${stock.id}`}>
+              {stock.symbol}
+            </h3>
+          </div>
+
+          {/* Company Name */}
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-muted-foreground truncate" data-testid={`text-company-${stock.id}`}>
               {stock.companyName}
             </p>
-            <div className="flex items-baseline space-x-4">
-              <p className="text-3xl font-bold text-foreground" data-testid={`text-price-${stock.id}`}>
-                ${stock.currentPrice.toFixed(2)}
-              </p>
-              <span 
-                className={`text-lg font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}
-                data-testid={`text-change-amount-${stock.id}`}
-              >
-                {isPositive ? '+' : ''}${stock.changeAmount.toFixed(2)}
-              </span>
-            </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleRemove}
-            disabled={removeStockMutation.isPending}
-            className="text-muted-foreground hover:text-destructive transition-colors p-2"
-            data-testid={`button-remove-${stock.id}`}
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
 
-        {/* Detailed Chart */}
-        <div className="mb-4">
-          <MiniChart
-            data={stock.chartData}
-            trend={stock.trend}
-            symbol={stock.symbol}
-          />
+          {/* Current Price */}
+          <div className="flex-shrink-0">
+            <p className="text-lg font-bold text-foreground" data-testid={`text-price-${stock.id}`}>
+              ${stock.currentPrice.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Change Amount */}
+          <div className="flex-shrink-0">
+            <span 
+              className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}
+              data-testid={`text-change-amount-${stock.id}`}
+            >
+              {isPositive ? '+' : ''}${stock.changeAmount.toFixed(2)}
+            </span>
+          </div>
+
+          {/* Change Percentage */}
+          <div className="flex-shrink-0">
+            <Badge 
+              variant={isPositive ? "default" : "destructive"}
+              className={`inline-flex items-center text-xs font-medium ${
+                isPositive 
+                  ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                  : "bg-red-100 text-red-800 hover:bg-red-100"
+              }`}
+              data-testid={`badge-change-${stock.id}`}
+            >
+              <TrendIcon className="mr-1 h-3 w-3" />
+              {isPositive ? '+' : ''}{stock.changePercent.toFixed(2)}%
+            </Badge>
+          </div>
+
+          {/* Mini Chart */}
+          <div className="flex-shrink-0 w-32 h-12">
+            <MiniChart
+              data={stock.chartData}
+              trend={stock.trend}
+              symbol={stock.symbol}
+            />
+          </div>
+
+          {/* Remove Button */}
+          <div className="flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRemove}
+              disabled={removeStockMutation.isPending}
+              className="text-muted-foreground hover:text-destructive transition-colors p-1"
+              data-testid={`button-remove-${stock.id}`}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

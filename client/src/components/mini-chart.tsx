@@ -13,9 +13,9 @@ export default function MiniChart({ data, trend, symbol }: MiniChartProps) {
     if (!data.length || !svgRef.current) return;
 
     const svg = svgRef.current;
-    const width = 600;
-    const height = 200;
-    const padding = 20;
+    const width = 120;
+    const height = 48;
+    const padding = 4;
 
     // Clear previous content
     svg.innerHTML = '';
@@ -26,35 +26,7 @@ export default function MiniChart({ data, trend, symbol }: MiniChartProps) {
     const maxPrice = Math.max(...prices);
     const priceRange = maxPrice - minPrice || 1;
 
-    // Create grid lines
-    const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    gridGroup.setAttribute('stroke', '#e5e7eb');
-    gridGroup.setAttribute('stroke-width', '0.5');
-    gridGroup.setAttribute('opacity', '0.5');
-
-    // Horizontal grid lines
-    for (let i = 0; i <= 4; i++) {
-      const y = (i / 4) * (height - 2 * padding) + padding;
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', padding.toString());
-      line.setAttribute('y1', y.toString());
-      line.setAttribute('x2', (width - padding).toString());
-      line.setAttribute('y2', y.toString());
-      gridGroup.appendChild(line);
-    }
-
-    // Vertical grid lines
-    for (let i = 0; i <= 6; i++) {
-      const x = (i / 6) * (width - 2 * padding) + padding;
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', x.toString());
-      line.setAttribute('y1', padding.toString());
-      line.setAttribute('x2', x.toString());
-      line.setAttribute('y2', (height - padding).toString());
-      gridGroup.appendChild(line);
-    }
-
-    svg.appendChild(gridGroup);
+    // Skip grid lines for compact view
 
     // Create gradient fill area under the line
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -111,97 +83,48 @@ export default function MiniChart({ data, trend, symbol }: MiniChartProps) {
     polyline.setAttribute('stroke-linejoin', 'round');
     svg.appendChild(polyline);
 
-    // Add data points
-    points.forEach((point, i) => {
-      if (i % Math.ceil(points.length / 20) === 0) { // Show every 20th point for more detail
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', point.x.toString());
-        circle.setAttribute('cy', point.y.toString());
-        circle.setAttribute('r', '2.5');
-        circle.setAttribute('fill', trend === 'positive' ? '#10B981' : '#EF4444');
-        circle.setAttribute('stroke', '#ffffff');
-        circle.setAttribute('stroke-width', '1.5');
-        svg.appendChild(circle);
-      }
-    });
+    // Skip visible data points for compact view
 
-    // Add hover circles for all data points
-    points.forEach((point, i) => {
-      const hoverCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      hoverCircle.setAttribute('cx', point.x.toString());
-      hoverCircle.setAttribute('cy', point.y.toString());
-      hoverCircle.setAttribute('r', '4');
-      hoverCircle.setAttribute('fill', 'transparent');
-      hoverCircle.setAttribute('stroke', 'transparent');
-      hoverCircle.style.cursor = 'pointer';
-      
-      // Add tooltip on hover
-      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-      const date = new Date(data[i].date).toLocaleDateString();
-      const price = data[i].price.toFixed(2);
-      title.textContent = `${date}: $${price}`;
-      hoverCircle.appendChild(title);
-      
-      // Add hover effects
-      hoverCircle.addEventListener('mouseenter', () => {
-        hoverCircle.setAttribute('fill', trend === 'positive' ? '#10B981' : '#EF4444');
-        hoverCircle.setAttribute('stroke', '#ffffff');
-        hoverCircle.setAttribute('stroke-width', '2');
-        hoverCircle.setAttribute('r', '4');
-      });
-      
-      hoverCircle.addEventListener('mouseleave', () => {
-        hoverCircle.setAttribute('fill', 'transparent');
-        hoverCircle.setAttribute('stroke', 'transparent');
-        hoverCircle.setAttribute('r', '4');
-      });
-      
-      svg.appendChild(hoverCircle);
-    });
+    // Simplified hover for compact view
+    const hoverRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    hoverRect.setAttribute('x', '0');
+    hoverRect.setAttribute('y', '0');
+    hoverRect.setAttribute('width', width.toString());
+    hoverRect.setAttribute('height', height.toString());
+    hoverRect.setAttribute('fill', 'transparent');
+    hoverRect.style.cursor = 'pointer';
+    
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    const firstDate = new Date(data[0].date).toLocaleDateString();
+    const lastDate = new Date(data[data.length - 1].date).toLocaleDateString();
+    const firstPrice = data[0].price.toFixed(2);
+    const lastPrice = data[data.length - 1].price.toFixed(2);
+    title.textContent = `${firstDate} - ${lastDate}: $${firstPrice} → $${lastPrice}`;
+    hoverRect.appendChild(title);
+    
+    svg.appendChild(hoverRect);
 
-    // Add price labels
-    const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    labelGroup.setAttribute('font-family', 'Inter, sans-serif');
-    labelGroup.setAttribute('font-size', '11');
-    labelGroup.setAttribute('fill', '#6b7280');
-
-    // Max price label
-    const maxLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    maxLabel.setAttribute('x', '5');
-    maxLabel.setAttribute('y', (padding + 4).toString());
-    maxLabel.textContent = `$${maxPrice.toFixed(2)}`;
-    labelGroup.appendChild(maxLabel);
-
-    // Min price label
-    const minLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    minLabel.setAttribute('x', '5');
-    minLabel.setAttribute('y', (height - padding - 4).toString());
-    minLabel.textContent = `$${minPrice.toFixed(2)}`;
-    labelGroup.appendChild(minLabel);
-
-    svg.appendChild(labelGroup);
+    // Skip price labels for compact view
   }, [data, trend, symbol]);
 
   if (!data.length) {
     return (
       <div 
-        className="w-full h-48 bg-muted rounded flex items-center justify-center text-muted-foreground text-sm"
+        className="w-full h-12 bg-muted rounded flex items-center justify-center text-muted-foreground text-xs"
         data-testid={`chart-no-data-${symbol}`}
       >
-        No chart data available
+        No data
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <svg
-        ref={svgRef}
-        className="w-full h-48"
-        viewBox="0 0 600 200"
-        preserveAspectRatio="xMidYMid meet"
-        data-testid={`chart-${symbol}`}
-      />
-    </div>
+    <svg
+      ref={svgRef}
+      className="w-full h-12"
+      viewBox="0 0 120 48"
+      preserveAspectRatio="none"
+      data-testid={`chart-${symbol}`}
+    />
   );
 }
